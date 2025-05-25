@@ -1,0 +1,68 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Wood CFT Calculator</title>
+<style>
+  body { font-family: sans-serif; margin: 2rem; }
+  label { display: block; margin-top: 1rem; }
+  input { padding: 0.5rem; margin-top: 0.2rem; width: 200px; }
+  .result { margin-top: 2rem; font-weight: bold; }
+</style>
+</head>
+<body>
+  <h1>Wood CFT Calculator</h1>
+
+  <label>
+    Thickness (in inches):
+    <input type="number" id="thickness" step="0.01" />
+  </label>
+
+  <label>
+    Width (in inches):
+    <input type="number" id="width" step="0.01" />
+  </label>
+
+  <label>
+    Length (in feet):
+    <input type="number" id="length" step="0.01" />
+  </label>
+
+  <label>
+    Rate (₹ / CFT):
+    <input type="number" id="rate" step="0.01" />
+  </label>
+
+  <div class="result" id="cftResult">CFT: 0</div>
+  <div class="result" id="amountResult">Total Amount (₹): 0</div>
+
+  <script>
+    const thicknessInput = document.getElementById('thickness');
+    const widthInput = document.getElementById('width');
+    const lengthInput = document.getElementById('length');
+    const rateInput = document.getElementById('rate');
+    const cftResult = document.getElementById('cftResult');
+    const amountResult = document.getElementById('amountResult');
+
+    function calculateCFT() {
+      const thickness = parseFloat(thicknessInput.value) || 0;
+      const width = parseFloat(widthInput.value) || 0;
+      const length = parseFloat(lengthInput.value) || 0;
+      const rate = parseFloat(rateInput.value) || 0;
+
+      const cft = (thickness * width * length) / 144;
+      const amount = cft * rate;
+
+      cftResult.textContent = `CFT: ${cft.toFixed(3)}`;
+      amountResult.textContent = `Total Amount (₹): ${amount.toFixed(2)}`;
+    }
+
+    thicknessInput.addEventListener('input', calculateCFT);
+    widthInput.addEventListener('input', calculateCFT);
+    lengthInput.addEventListener('input', calculateCFT);
+    rateInput.addEventListener('input', calculateCFT);
+  </script>
+</body>
+</html>
