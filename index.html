@@ -19,6 +19,16 @@
     button { margin-right: 0.5rem; padding: 0.5rem 1rem; }
     .header { margin-bottom: 1rem; }
     .header span { display: inline-block; margin-right: 1rem; font-weight: bold; }
+
+    @media print {
+  body * { visibility: hidden; }
+  #billHeader, #billTable {
+    visibility: visible;
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+}
   </style>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXKSD0W66Q"></script>
