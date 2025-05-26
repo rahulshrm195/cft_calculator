@@ -21,12 +21,10 @@
     .header span { display: inline-block; margin-right: 1rem; font-weight: bold; }
 
     @media print {
-  body * { visibility: hidden; }
+  body * { display: none; } /* Completely hide everything */
   #billHeader, #billTable {
-    visibility: visible;
-    position: absolute;
-    left: 0;
-    top: 0;
+    display: block; /* Show these in print */
+    position: static; /* Reset position */
   }
 }
   </style>
