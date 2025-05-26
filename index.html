@@ -1,73 +1,116 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <title>Wood CFT / GNFT Calculator</title>
   <meta name="description" content="A simple and easy tool to calculate wood CFT or GNFT. Free and fast!" />
-<meta name="google-site-verification" content="KIbZHCj6KO6U38pcFSAHighvm8YM-qhjsndCiQ938yo" />
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="manifest" href="manifest.json" />
-<title>Wood CFT Calculator</title>
-<style>
-  body { font-family: sans-serif; margin: 2rem; }
-  label { display: block; margin-top: 1rem; }
-  input { padding: 0.5rem; margin-top: 0.2rem; width: 200px; }
-  .result { margin-top: 2rem; font-weight: bold; }
-</style>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXKSD0W66Q"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-XXKSD0W66Q');
-</script>
+  <meta name="google-site-verification" content="KIbZHCj6KO6U38pcFSAHighvm8YM-qhjsndCiQ938yo" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#4CAF50" />
+  <style>
+    body { font-family: sans-serif; margin: 2rem; }
+    label { display: block; margin-top: 1rem; }
+    input { padding: 0.5rem; margin-top: 0.2rem; width: 200px; }
+    .result { margin-top: 1rem; font-weight: bold; }
+    table { border-collapse: collapse; width: 100%; margin-top: 2rem; }
+    table, th, td { border: 1px solid black; padding: 5px; text-align: center; }
+    .button-row { margin-top: 1rem; }
+    button { margin-right: 0.5rem; padding: 0.5rem 1rem; }
+    .header { margin-bottom: 1rem; }
+    .header span { display: inline-block; margin-right: 1rem; font-weight: bold; }
+  </style>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXKSD0W66Q"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXKSD0W66Q');
+  </script>
 </head>
 <body>
   <h1>Wood CFT Calculator</h1>
+
+  <div class="header">
+    <label>
+      Customer Name:
+      <input type="text" id="customerName" placeholder="Enter customer name" />
+    </label>
+    <label>
+      Date:
+      <input type="date" id="billDate" />
+    </label>
+  </div>
+
   <p style="color: gray; font-size: 0.9rem;">
     Note: CFT (Cubic Feet) is also known as Ghan Feet (GNFT) in India.
   </p>
-  <label>
-    Thickness (in inches):
-    <input type="number" id="thickness" step="0.01" />
-  </label>
+  <label>Thickness (in inches): <input type="number" id="thickness" step="0.01" /></label>
+  <label>Width (in inches): <input type="number" id="width" step="0.01" /></label>
+  <label>Length (in feet): <input type="number" id="length" step="0.01" /></label>
+  <label>Quantity: <input type="number" id="quantity" value="1" step="1" /></label>
+  <label>Rate (₹ / CFT): <input type="number" id="rate" step="0.01" /></label>
 
-  <label>
-    Width (in inches):
-    <input type="number" id="width" step="0.01" />
-  </label>
-
-  <label>
-    Length (in feet):
-    <input type="number" id="length" step="0.01" />
-  </label>
-
-  <label>
-    Rate (₹ / CFT):
-    <input type="number" id="rate" step="0.01" />
-  </label>
-
-  <div class="result" id="cftResult">CFT / GNFT : 0</div>
+  <div class="result" id="cftResult">CFT: 0</div>
   <div class="result" id="amountResult">Total Amount (₹): 0</div>
+
+  <div class="button-row">
+    <button onclick="addToBill()">Add to Bill</button>
+    <button onclick="clearBill()">Clear Bill</button>
+    <button onclick="printBill()">Print / PDF</button>
+  </div>
+
+  <h2>Bill Summary</h2>
+  <div id="billHeader">
+    <span id="displayCustomerName"></span>
+    <span id="displayDate"></span>
+  </div>
+
+  <table id="billTable">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Size (T x W x L)</th>
+        <th>Quantity</th>
+        <th>Rate (₹)</th>
+        <th>CFT</th>
+        <th>Amount (₹)</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+    <tfoot>
+      <tr>
+        <td colspan="4"><strong>Total</strong></td>
+        <td id="totalCft">0</td>
+        <td id="totalAmount">0</td>
+      </tr>
+    </tfoot>
+  </table>
 
   <script>
     const thicknessInput = document.getElementById('thickness');
     const widthInput = document.getElementById('width');
     const lengthInput = document.getElementById('length');
+    const quantityInput = document.getElementById('quantity');
     const rateInput = document.getElementById('rate');
     const cftResult = document.getElementById('cftResult');
     const amountResult = document.getElementById('amountResult');
+    const customerNameInput = document.getElementById('customerName');
+    const billDateInput = document.getElementById('billDate');
+    const displayCustomerName = document.getElementById('displayCustomerName');
+    const displayDate = document.getElementById('displayDate');
+
+    const bill = [];
 
     function calculateCFT() {
       const thickness = parseFloat(thicknessInput.value) || 0;
       const width = parseFloat(widthInput.value) || 0;
       const length = parseFloat(lengthInput.value) || 0;
       const rate = parseFloat(rateInput.value) || 0;
+      const quantity = parseInt(quantityInput.value) || 1;
 
-      const cft = (thickness * width * length) / 144;
+      const cft = (thickness * width * length * quantity) / 144;
       const amount = cft * rate;
 
       cftResult.textContent = `CFT: ${cft.toFixed(3)}`;
@@ -78,6 +121,83 @@
     widthInput.addEventListener('input', calculateCFT);
     lengthInput.addEventListener('input', calculateCFT);
     rateInput.addEventListener('input', calculateCFT);
+    quantityInput.addEventListener('input', calculateCFT);
+
+    function addToBill() {
+      const thickness = parseFloat(thicknessInput.value) || 0;
+      const width = parseFloat(widthInput.value) || 0;
+      const length = parseFloat(lengthInput.value) || 0;
+      const rate = parseFloat(rateInput.value) || 0;
+      const quantity = parseInt(quantityInput.value) || 1;
+
+      if (thickness === 0 || width === 0 || length === 0 || rate === 0) {
+        alert("Please fill all fields with valid numbers before adding to bill.");
+        return;
+      }
+
+      const cft = (thickness * width * length * quantity) / 144;
+      const amount = cft * rate;
+
+      const log = { thickness, width, length, quantity, rate, cft, amount };
+      bill.push(log);
+      updateBillTable();
+      updateHeader();
+      clearInputs();
+    }
+
+    function updateBillTable() {
+      const tbody = document.querySelector('#billTable tbody');
+      tbody.innerHTML = '';
+      let totalCft = 0, totalAmount = 0;
+
+      bill.forEach((log, index) => {
+        const row = `<tr>
+          <td>${index + 1}</td>
+          <td>${log.thickness} x ${log.width} x ${log.length}</td>
+          <td>${log.quantity}</td>
+          <td>${log.rate}</td>
+          <td>${log.cft.toFixed(3)}</td>
+          <td>${log.amount.toFixed(2)}</td>
+        </tr>`;
+        tbody.innerHTML += row;
+        totalCft += log.cft;
+        totalAmount += log.amount;
+      });
+
+      document.getElementById('totalCft').innerText = totalCft.toFixed(3);
+      document.getElementById('totalAmount').innerText = totalAmount.toFixed(2);
+    }
+
+    function clearBill() {
+      if (confirm("Are you sure you want to clear the entire bill?")) {
+        bill.length = 0;
+        updateBillTable();
+        displayCustomerName.innerText = '';
+        displayDate.innerText = '';
+      }
+    }
+
+    function updateHeader() {
+      const name = customerNameInput.value.trim();
+      const date = billDateInput.value;
+      displayCustomerName.innerText = name ? `Customer: ${name}` : '';
+      displayDate.innerText = date ? `Date: ${date}` : '';
+    }
+
+    function clearInputs() {
+      thicknessInput.value = '';
+      widthInput.value = '';
+      lengthInput.value = '';
+      quantityInput.value = 1;
+      rateInput.value = '';
+      cftResult.textContent = 'CFT: 0';
+      amountResult.textContent = 'Total Amount (₹): 0';
+    }
+
+    function printBill() {
+      updateHeader();
+      window.print();
+    }
   </script>
 </body>
 </html>
