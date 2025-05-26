@@ -12,10 +12,21 @@
   input { padding: 0.5rem; margin-top: 0.2rem; width: 200px; }
   .result { margin-top: 2rem; font-weight: bold; }
 </style>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXKSD0W66Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-XXKSD0W66Q');
+</script>
 </head>
 <body>
   <h1>Wood CFT Calculator</h1>
-
+  <p style="color: gray; font-size: 0.9rem;">
+    Note: CFT (Cubic Feet) is also known as Ghan Feet (GNFT) in India.
+  </p>
   <label>
     Thickness (in inches):
     <input type="number" id="thickness" step="0.01" />
@@ -36,7 +47,7 @@
     <input type="number" id="rate" step="0.01" />
   </label>
 
-  <div class="result" id="cftResult">CFT: 0</div>
+  <div class="result" id="cftResult">CFT / GNFT : 0</div>
   <div class="result" id="amountResult">Total Amount (₹): 0</div>
 
   <script>
